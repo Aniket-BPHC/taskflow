@@ -1,16 +1,16 @@
 # TaskFlow
 
-[![CI](https://github.com/your-username/taskflow/actions/workflows/ci.yml/badge.svg)](https://github.com/your-username/taskflow/actions/workflows/ci.yml)
+[![CI](https://github.com/Aniket-BPHC/taskflow/actions/workflows/ci.yml/badge.svg)](https://github.com/Aniket-BPHC/taskflow/actions/workflows/ci.yml)
 [![Backend](https://img.shields.io/badge/backend-railway-0B0D0E?logo=railway)](https://taskflow-production-fa5f.up.railway.app)
-[![Frontend](https://img.shields.io/badge/frontend-vercel-000000?logo=vercel)](https://frontend-flame-nine-17.vercel.app)
+[![Frontend](https://img.shields.io/badge/frontend-vercel-000000?logo=vercel)](https://taskflow-floof.vercel.app)
 
-**Live demo:** https://frontend-flame-nine-17.vercel.app
+**Live demo:** https://taskflow-floof.vercel.app
 
 Real-time collaborative task manager. Full-stack portfolio project built to demonstrate production engineering patterns: REST API design, WebSocket event broadcasting, JWT auth, multi-tenant data isolation, containerisation, and CI/CD.
 
 ## What it does
 
-TaskFlow lets teams manage work across shared workspaces. Users create workspaces, invite members by email, organize work into projects, and track tasks on a Kanban board. Changes made by any collaborator — task creation, status updates, comments — appear on every connected client's board in real time without a page refresh.
+TaskFlow lets teams manage work across shared workspaces. Users create workspaces, invite members by email, organise work into projects, and track tasks on a Kanban board. Changes made by any collaborator — task creation, status updates, comments — appear on every connected client's board in real time without a page refresh.
 
 ## Tech stack
 
@@ -52,11 +52,9 @@ graph LR
     Cache --> UI
 ```
 
-The backend runs sync FastAPI route handlers in a thread pool. Broadcasting to WebSocket clients from a sync context requires scheduling onto the event loop explicitly via `asyncio.run_coroutine_threadsafe` — a subtlety that naive implementations get wrong (and silently fail). The loop is captured at startup and held by the `ConnectionManager`.
+The backend runs sync FastAPI route handlers in a thread pool. Broadcasting to WebSocket clients from a sync context requires scheduling onto the event loop explicitly via `asyncio.run_coroutine_threadsafe` — a subtlety that naive implementations get wrong and silently fail. The event loop is captured at startup and held by the `ConnectionManager`.
 
 ## Real-time flow
-
-When a user updates a task:
 
 ```mermaid
 sequenceDiagram
@@ -71,17 +69,15 @@ sequenceDiagram
     API->>CM: broadcast_sync(project_id, event)
     CM-->>B: WS push {event, task_id, changes}
     B->>B: queryClient.setQueryData(...)
-    Note over B: Board re-renders instantly
+    Note over B: Board re-renders instantly, no refetch
 ```
-
-No polling. The receiving client patches its local TanStack Query cache directly — no network round-trip needed.
 
 ## Local development
 
 Requires Docker Desktop.
 
 ```bash
-git clone https://github.com/your-username/taskflow.git
+git clone https://github.com/Aniket-BPHC/taskflow.git
 cd taskflow
 docker compose up --build
 ```
@@ -90,7 +86,7 @@ docker compose up --build
 - API: http://localhost:8000
 - Swagger: http://localhost:8000/docs
 
-The compose file runs `alembic upgrade head` automatically before starting the API server, so no manual migration step is needed.
+The compose file runs `alembic upgrade head` automatically before starting the API server.
 
 ## API reference
 
@@ -155,26 +151,25 @@ cd backend
 pytest tests/ -v
 ```
 
-Uses per-test transaction rollback — each test gets a clean database state with no teardown overhead.
+Per-test transaction rollback — each test gets a clean database state with no teardown overhead.
 
 ## Deployment
 
-Backend is on Railway with a `railway.json` that runs `alembic upgrade head` as a release command before every deploy. Frontend is on Vercel with a `vercel.json` that handles SPA client-side routing rewrites.
-
-To self-host:
+Backend on Railway with `railway.json` running `alembic upgrade head` as a release command before every deploy. Frontend on Vercel with `vercel.json` handling SPA client-side routing rewrites.
 
 ```bash
-# Backend (Railway)
+# Backend
 railway init
 railway add --database postgresql
 railway variables set JWT_SECRET=<secret>
-railway variables set CORS_ORIGINS=https://your-frontend.vercel.app
+railway variables set CORS_ORIGINS=https://taskflow-floof.vercel.app
 railway up ./backend
 
-# Frontend (Vercel)
+# Frontend
 cd frontend
 vercel --prod
-# Set VITE_API_URL=https://your-railway-backend.up.railway.app in Vercel env settings
+# Set VITE_API_URL=https://taskflow-production-fa5f.up.railway.app in Vercel env settings
+# Set Root Directory to "frontend" in Vercel project settings
 ```
 
 ## Project structure
@@ -186,20 +181,16 @@ taskflow/
 ├── backend/
 │   ├── Dockerfile
 │   ├── railway.json
-│   ├── Procfile
 │   ├── requirements.txt
-│   ├── alembic/
-│   │   └── versions/0001_initial_schema.py
-│   ├── app/
-│   │   ├── main.py
-│   │   ├── core/        config, database, security
-│   │   ├── models/      User, Workspace, Project, Task, Comment
-│   │   ├── schemas/     Pydantic v2 request/response models
-│   │   ├── routers/     auth, workspaces, projects, tasks, comments
-│   │   └── ws/          ConnectionManager, WebSocket endpoint
-│   └── tests/
-│       ├── conftest.py  transaction-rollback fixture
-│       └── test_api.py
+│   ├── alembic/versions/0001_initial_schema.py
+│   └── app/
+│       ├── main.py
+│       ├── core/        config, database, security
+│       ├── models/      User, Workspace, Project, Task, Comment
+│       ├── schemas/     Pydantic v2 request/response models
+│       ├── routers/     auth, workspaces, projects, tasks, comments
+│       ├── ws/          ConnectionManager, WebSocket endpoint
+│       └── tests/       transaction-rollback fixtures, integration tests
 └── frontend/
     ├── vercel.json
     ├── vite.config.js
