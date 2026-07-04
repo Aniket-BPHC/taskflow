@@ -65,6 +65,8 @@ export default function KanbanBoard() {
         return [...old, event.comment];
       });
       if (event.comment.author_id !== user?.id) setToast("New comment on a task");
+    } else if (event.event === "presence_left") {
+      setPresence((prev) => { const next = { ...prev }; delete next[event.user_id]; return next; });
     } else if (event.event === "presence") {
       setPresence((prev) => ({ ...prev, [event.user_id]: event.display_name }));
     }
