@@ -25,39 +25,69 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="bg-white rounded-2xl shadow-lg p-8 w-full max-w-md">
-        <h1 className="text-2xl font-bold text-gray-900 mb-1">TaskFlow</h1>
-        <p className="text-gray-500 text-sm mb-6">Sign in to your account</p>
-        {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
-        <div className="space-y-4">
-          <input
-            type="email"
-            placeholder="Email"
-            value={form.email}
-            onChange={(e) => setForm({ ...form, email: e.target.value })}
-            className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={form.password}
-            onChange={(e) => setForm({ ...form, password: e.target.value })}
-            onKeyDown={(e) => e.key === "Enter" && submit()}
-            className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          />
-          <button
-            onClick={submit}
-            disabled={loading}
-            className="w-full bg-indigo-600 text-white py-2.5 rounded-lg font-semibold hover:bg-indigo-700 disabled:opacity-50 transition-colors"
-          >
-            {loading ? "Signing in…" : "Sign In"}
-          </button>
+    <div className="min-h-screen flex bg-slate-950">
+      {/* Left panel */}
+      <div className="hidden lg:flex w-1/2 bg-slate-900 border-r border-slate-800 flex-col justify-between p-12">
+        <span className="text-xl font-bold text-white tracking-tight">TaskFlow</span>
+        <div>
+          <p className="text-3xl font-bold text-white leading-snug mb-4">
+            Ship faster,<br />together.
+          </p>
+          <p className="text-slate-400 text-sm leading-relaxed">
+            Real-time collaborative task management. Changes appear instantly across every connected teammate — no refresh, no lag.
+          </p>
         </div>
-        <p className="text-sm text-gray-500 mt-4 text-center">
-          No account?{" "}
-          <Link to="/register" className="text-indigo-600 hover:underline">Register</Link>
-        </p>
+        <p className="text-slate-600 text-xs">Built with FastAPI + WebSockets</p>
+      </div>
+
+      {/* Right panel */}
+      <div className="flex-1 flex items-center justify-center px-6">
+        <div className="w-full max-w-sm">
+          <h2 className="text-2xl font-bold text-white mb-1">Welcome back</h2>
+          <p className="text-slate-400 text-sm mb-8">Sign in to continue</p>
+
+          {error && (
+            <div className="bg-red-500/10 border border-red-500/30 text-red-400 text-sm rounded-lg px-4 py-3 mb-6">
+              {error}
+            </div>
+          )}
+
+          <div className="space-y-4">
+            <div>
+              <label className="block text-xs font-medium text-slate-400 mb-1.5">Email</label>
+              <input
+                type="email"
+                value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
+                className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-colors"
+                placeholder="you@example.com"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-slate-400 mb-1.5">Password</label>
+              <input
+                type="password"
+                value={form.password}
+                onChange={(e) => setForm({ ...form, password: e.target.value })}
+                onKeyDown={(e) => e.key === "Enter" && submit()}
+                className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-colors"
+                placeholder="••••••••"
+              />
+            </div>
+            <button
+              onClick={submit}
+              disabled={loading}
+              className="w-full bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-white py-2.5 rounded-lg font-semibold text-sm transition-colors"
+            >
+              {loading ? "Signing in…" : "Sign In"}
+            </button>
+          </div>
+
+          <p className="text-sm text-slate-500 mt-6 text-center">
+            No account?{" "}
+            <Link to="/register" className="text-violet-400 hover:text-violet-300">Register</Link>
+          </p>
+        </div>
       </div>
     </div>
   );
