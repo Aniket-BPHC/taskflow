@@ -34,7 +34,7 @@ export default function Login() {
             Ship faster,<br />together.
           </p>
           <p className="text-slate-400 text-sm leading-relaxed">
-            Real-time collaborative task management. Changes appear instantly across every connected teammate — no refresh, no lag.
+            Real-time collaborative task management. Changes appear instantly across every connected teammate - no refresh, no lag.
           </p>
         </div>
         <p className="text-slate-600 text-xs">Built with FastAPI + WebSockets</p>

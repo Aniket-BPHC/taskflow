@@ -112,7 +112,7 @@ export default function WorkspaceDetail() {
                 {projects.length === 0 && (
                   <div className="text-center py-12 text-slate-500">
                     <p className="text-3xl mb-3">🗂</p>
-                    <p className="text-sm">No projects yet — create one above</p>
+                    <p className="text-sm">No projects yet - create one above</p>
                   </div>
                 )}
               </div>

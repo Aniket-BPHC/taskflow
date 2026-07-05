@@ -10,7 +10,7 @@ Real-time collaborative task manager. Full-stack portfolio project built to demo
 
 ## What it does
 
-TaskFlow lets teams manage work across shared workspaces. Users create workspaces, invite members by email, organise work into projects, and track tasks on a Kanban board. Changes made by any collaborator — task creation, status updates, comments — appear on every connected client's board in real time without a page refresh.
+TaskFlow lets teams manage work across shared workspaces. Users create workspaces, invite members by email, organise work into projects, and track tasks on a Kanban board. Changes made by any collaborator - task creation, status updates, comments - appear on every connected client's board in real time without a page refresh. Live presence avatars show which teammates are currently viewing the same board.
 
 ## Tech stack
 
@@ -52,7 +52,7 @@ graph LR
     Cache --> UI
 ```
 
-The backend runs sync FastAPI route handlers in a thread pool. Broadcasting to WebSocket clients from a sync context requires scheduling onto the event loop explicitly via `asyncio.run_coroutine_threadsafe` — a subtlety that naive implementations get wrong and silently fail. The event loop is captured at startup and held by the `ConnectionManager`.
+The backend runs sync FastAPI route handlers in a thread pool. Broadcasting to WebSocket clients from a sync context requires scheduling onto the event loop explicitly via `asyncio.run_coroutine_threadsafe` - a subtlety that naive implementations get wrong and silently fail. The event loop is captured at startup and held by the `ConnectionManager`.
 
 ## Real-time flow
 
@@ -71,6 +71,17 @@ sequenceDiagram
     B->>B: queryClient.setQueryData(...)
     Note over B: Board re-renders instantly, no refetch
 ```
+
+## Features
+
+- Multi-tenant workspaces with owner/member roles and email invites
+- Kanban board with To Do / In Progress / Done columns
+- Real-time task and comment sync across all connected clients via WebSockets
+- Live presence - avatars of teammates currently viewing the same board appear instantly on connect and disappear on disconnect
+- Due date highlighting - overdue tasks flagged in red, due-today in amber
+- "My tasks" filter - one-click to show only tasks you created or are assigned to
+- JWT auth with bcrypt password hashing
+- Per-test transaction rollback in the test suite - no teardown overhead
 
 ## Local development
 
@@ -138,10 +149,12 @@ WS /ws/{project_id}?token=<jwt>
 
 Event payloads:
 ```json
-{ "event": "task.created",  "task": { ...TaskOut } }
-{ "event": "task.updated",  "task_id": "...", "changes": { ... } }
-{ "event": "task.deleted",  "task_id": "..." }
-{ "event": "comment.added", "comment": { ...CommentOut } }
+{ "event": "task.created",   "task": { ...TaskOut } }
+{ "event": "task.updated",   "task_id": "...", "changes": { ... } }
+{ "event": "task.deleted",   "task_id": "..." }
+{ "event": "comment.added",  "comment": { ...CommentOut } }
+{ "event": "presence",       "user_id": "...", "display_name": "..." }
+{ "event": "presence_left",  "user_id": "..." }
 ```
 
 ## Tests
@@ -151,7 +164,7 @@ cd backend
 pytest tests/ -v
 ```
 
-Per-test transaction rollback — each test gets a clean database state with no teardown overhead.
+Per-test transaction rollback - each test gets a clean database state with no teardown overhead.
 
 ## Deployment
 
@@ -198,7 +211,7 @@ taskflow/
         ├── App.jsx          auth hydration, route guards
         ├── api/             axios client, per-module API functions
         ├── hooks/           useAuthStore (Zustand), useWebSocket
-        ├── components/      TaskCard, KanbanColumn, CommentThread
+        ├── components/      TaskCard, KanbanColumn, CommentThread, Layout
         └── pages/           Login, Register, WorkspaceList,
                              WorkspaceDetail, KanbanBoard, TaskDetail
 ```

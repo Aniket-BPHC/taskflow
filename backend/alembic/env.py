@@ -9,7 +9,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 from app.core.config import get_settings
 from app.core.database import Base
-import app.models  # noqa: F401 — registers all models with Base
+import app.models  # noqa: F401 - registers all models with Base
 
 config = context.config
 settings = get_settings()
